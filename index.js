@@ -1,16 +1,18 @@
 import express from "express";
 import bodyParser from "body-parser";
 import pg from "pg";
+import env from "dotenv";
 
 const app = express();
 const port = 3000;
+env.config();
 
 const db = new pg.Client({
-  user: "postgres",
-  host: "localhost",
-  database: "Hospital",
-  password: "123456",
-  port: 5432,
+  user: process.env.PG_USER,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DATABASE,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_PORT,
 });
 
 var registerDetails = [];
@@ -56,6 +58,8 @@ async function userVerification(input) {
 }
 
 //HTTPS Requests
+
+//GET REQUESTS
 app.get("/", async (req, res) => {
   const logindetails = await refreshLoginDatabase();
   console.log("logindetails : ");
@@ -76,6 +80,8 @@ app.get("/doctorPage", async (req, res) => {
   console.log(getPatientDetails);
   res.render("doctorPage.ejs", { details: getPatientDetails });
 });
+
+//POST REQUESTS
 
 app.post("/login", async (req, res) => {
   const input = req.body;
